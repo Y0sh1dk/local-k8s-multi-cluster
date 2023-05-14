@@ -11,16 +11,22 @@ resource "kind_cluster" "default" {
     api_version = "kind.x-k8s.io/v1alpha4"
 
     dynamic "node" {
-      for_each = range(each.value.cp_nodes)
-      content {
-        role = "control-plane"
-      }
-    }
+      for_each = each.value.nodes
 
-    dynamic "node" {
-      for_each = range(each.value.worker_nodes)
       content {
-        role = "worker"
+        role                   = node.value.role
+        kubeadm_config_patches = node.value.kubeadm_config_patches
+
+        dynamic "extra_port_mappings" {
+          for_each = node.value.extra_port_mappings
+
+          content {
+            listen_address = extra_port_mappings.value.listen_address
+            container_port = extra_port_mappings.value.container_port
+            host_port      = extra_port_mappings.value.host_port
+            protocol       = extra_port_mappings.value.protocol
+          }
+        }
       }
     }
 
