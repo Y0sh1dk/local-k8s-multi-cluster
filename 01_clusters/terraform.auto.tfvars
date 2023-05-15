@@ -12,7 +12,7 @@ clusters = [
         protocol       = "TCP"
         },
         {
-          container_port = "80"
+          container_port = "443"
           host_port      = "443"
           protocol       = "TCP"
       }]
