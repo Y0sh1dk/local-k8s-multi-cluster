@@ -1,2 +1,2 @@
-admin_password = "testpassword"
-insecure       = true
+argocd_admin_password = "testpassword"
+argocd_insecure       = true
