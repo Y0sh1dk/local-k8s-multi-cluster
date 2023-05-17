@@ -1,6 +1,6 @@
 output "cluster_configs" {
   value = [
-    for cluster in kind_cluster.default :
+    for cluster in kind_cluster.this :
     {
       name                   = cluster.name
       endpoint               = cluster.endpoint

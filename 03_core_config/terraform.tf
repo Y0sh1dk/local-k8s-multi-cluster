@@ -8,9 +8,13 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.20.0"
     }
+    argocd = {
+      source  = "oboukili/argocd"
+      version = ">= 5.3.0"
+    }
   }
   backend "local" {
-    path = "../tf_state/02_core_services.tfstate"
+    path = "../tf_states/03_core_config.tfstate"
   }
 }
 

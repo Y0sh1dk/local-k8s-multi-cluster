@@ -33,33 +33,3 @@ resource "helm_release" "argocd" {
   #   value = "/argo-cd"
   # }
 }
-
-resource "kubernetes_ingress_v1" "example" {
-  wait_for_load_balancer = false
-  metadata {
-    name      = "argocd-server-ingress"
-    namespace = kubernetes_namespace.argocd.metadata[0].name
-
-    annotations = {
-      "kubernetes.io/ingress.class" = "nginx"
-    }
-  }
-  spec {
-    rule {
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-          backend {
-            service {
-              name = "argo-cd-argocd-server"
-              port {
-                number = 80
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}

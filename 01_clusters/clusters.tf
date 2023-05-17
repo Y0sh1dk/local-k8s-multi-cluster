@@ -1,4 +1,4 @@
-resource "kind_cluster" "default" {
+resource "kind_cluster" "this" {
   for_each = { for cluster in var.clusters : cluster.name => cluster }
 
   name            = each.value.name

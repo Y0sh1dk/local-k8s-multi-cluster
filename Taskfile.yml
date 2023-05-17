@@ -1,0 +1,46 @@
+version: "3"
+
+vars:
+  TF_STATE_DIR: "{{ .TASKFILE_DIR }}/tf_state"
+  K8S_CONTEXT_DIR: "{{ .TASKFILE_DIR }}/contexts"
+
+tasks:
+  clusters:
+    desc: Provision Kind Clusters
+    dir: "{{ .TASKFILE_DIR }}/01_clusters"
+    cmds:
+      - terraform init && terraform apply -auto-approve
+
+  core_services:
+    desc: Provision core services on clusters
+    dir: "{{ .TASKFILE_DIR }}/02_core_services"
+    cmds:
+      - terraform init && terraform apply -auto-approve
+
+  core_config:
+    desc: Configure core services on clusters
+    dir: "{{ .TASKFILE_DIR }}/03_core_config"
+    cmds:
+      - terraform init && terraform apply -auto-approve
+
+  reset:
+    desc: Remove everything
+    dir: "{{ .TASKFILE_DIR }}"
+    cmds:
+      - rm {{ .TF_STATE_DIR }}/* || true
+      - rm {{ .K8S_CONTEXT_DIR }}/* || true
+      - rm -rf {{ .TASKFILE_DIR }}/01_clusters/.terraform || true
+      - rm -rf {{ .TASKFILE_DIR }}/02_core_services/.terraform || true
+      - rm -rf {{ .TASKFILE_DIR }}/03_core_config/.terraform || true
+      - kind delete clusters -A
+
+  k9s:
+    desc: Start k9s with the generated contexts
+    cmds:
+      - KUBECONFIG={{ .K8S_CONTEXT_DIR }}/config k9s
+
+  all:
+    cmds:
+      - task: clusters
+      - task: core_services
+      - task: core_config
