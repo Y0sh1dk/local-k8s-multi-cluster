@@ -38,3 +38,4 @@ tfplan
 
 # Kube config
 contexts/config
+contexts/incluster_kubeconfig
