@@ -11,6 +11,7 @@ To use this repository, ensure that you have the following prerequisites install
 - [Docker](https://www.docker.com/get-started)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
+- [taskfile](https://taskfile.dev/)
 
 ## Getting Started
 
@@ -22,18 +23,10 @@ To get started with `local-k8s-multi-cluster`, follow these steps:
    git clone https://github.com/Y0sh1dk/local-k8s-multi-cluster.git
    ```
 
-2. Provision Kind clusters:
+2. Provision:
 
    ```bash
-   cd 01_clusters
-   terraform apply
-   ```
-
-3. Provision core services:
-
-   ```bash
-   cd 02_core_services
-   terraform apply
+   task all
    ```
 
 ## License

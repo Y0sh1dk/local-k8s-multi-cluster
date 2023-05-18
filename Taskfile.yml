@@ -40,6 +40,7 @@ tasks:
       - KUBECONFIG={{ .K8S_CONTEXT_DIR }}/config k9s
 
   all:
+    desc: Provision the full stack
     cmds:
       - task: clusters
       - task: core_services
