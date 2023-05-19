@@ -20,7 +20,7 @@ locals {
     } }
   ]
 
-  new_kubeconfig = merge(local.kubeconfig_json, { clusters : local.new_clusters_block })
+  incluster_kubeconfig = merge(local.kubeconfig_json, { clusters : local.new_clusters_block })
 
   cluster_credentials = {
     for cluster in keys(local.cluster_cluster_configs) : cluster => {
@@ -30,6 +30,9 @@ locals {
       client-key-data            = local.cluster_user_configs[cluster].client-key-data
     }
   }
+
+  argocd_config        = data.terraform_remote_state.tf_02_core_services.outputs.argocd_config
+  ingress_nginx_config = data.terraform_remote_state.tf_02_core_services.outputs.ingress_nginx_config
 }
 
 data "local_file" "kubeconfig" {
@@ -37,8 +40,8 @@ data "local_file" "kubeconfig" {
 }
 
 
-resource "local_file" "new_kubeconfig" {
-  content         = replace(yamlencode(local.new_kubeconfig), "/((?:^|\n)[\\s-]*)\"([\\w-]+)\":/", "$1$2:")
+resource "local_file" "incluster_kubeconfig" {
+  content         = replace(yamlencode(local.incluster_kubeconfig), "/((?:^|\n)[\\s-]*)\"([\\w-]+)\":/", "$1$2:")
   file_permission = 644
   filename        = "${local.k8s_config_dir}/incluster_kubeconfig"
 }
