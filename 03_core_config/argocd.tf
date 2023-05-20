@@ -7,11 +7,13 @@ resource "null_resource" "add_cluster" {
     command     = <<-EOT
         POD_ID=$(kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE get pod | grep 'argocd-server' | awk 'END {print $1}' | xargs echo)
         CONTEXTS=$(yq '.clusters.[].name' $INCLUSTER_KUBECONFIG)
-        kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE cp $INCLUSTER_KUBECONFIG $POD_ID:/tmp
+        kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE cp $INCLUSTER_KUBECONFIG $POD_ID:$ARGOCD_POD_DIRECTORY
         kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE exec $POD_ID -- sh -c 'echo "y" | argocd login localhost:8080 --username ${local.argocd_config.admin_username} --password ${local.argocd_config.admin_password} --insecure'
         for context in $CONTEXTS
         do
-            kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE exec $POD_ID -- argocd cluster add $context --name $context --kubeconfig /tmp/incluster_kubeconfig
+          if [ "$context" != "$KUBECTL_CONTEXT" ]; then
+            kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE exec $POD_ID -- argocd cluster add $context --name $context --kubeconfig $ARGOCD_POD_DIRECTORY/incluster_kubeconfig
+          fi
         done
     EOT
     environment = {
@@ -21,6 +23,7 @@ resource "null_resource" "add_cluster" {
       "ARGOCD_NAMESPACE"     = local.argocd_config.chart_metadata[0].namespace
       "ARGOCD_USERNAME"      = local.argocd_config.admin_username
       "ARGOCD_PASSWORD"      = local.argocd_config.admin_password
+      "ARGOCD_POD_DIRECTORY" = "/tmp"
     }
   }
 
