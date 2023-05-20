@@ -1,6 +1,6 @@
-resource "null_resource" "add_cluster" {
+resource "null_resource" "argocd_clusters" {
   triggers = {
-    time = timestamp()
+    incluster_kubeconfig = local_file.incluster_kubeconfig.content_base64
   }
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
