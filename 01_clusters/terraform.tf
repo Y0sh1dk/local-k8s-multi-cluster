@@ -6,6 +6,6 @@ terraform {
     }
   }
   backend "local" {
-    path = "../tf_state/01_clusters.tfstate"
+    path = "../tf_states/01_clusters.tfstate"
   }
 }

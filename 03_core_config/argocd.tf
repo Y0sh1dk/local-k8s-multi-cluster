@@ -15,7 +15,7 @@ resource "null_resource" "add_cluster" {
         done
     EOT
     environment = {
-      "KUBECONFIG"           = "${local.k8s_config_dir}/config"
+      "KUBECONFIG"           = "${local.k8s_config_dir}/kubeconfig"
       "INCLUSTER_KUBECONFIG" = local_file.incluster_kubeconfig.filename
       "KUBECTL_CONTEXT"      = "kind-management-cluster"
       "ARGOCD_NAMESPACE"     = local.argocd_config.chart_metadata[0].namespace

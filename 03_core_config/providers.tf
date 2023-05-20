@@ -6,12 +6,12 @@ provider "argocd" {
 
 provider "helm" {
   kubernetes {
-    config_path    = "${local.k8s_config_dir}/config"
+    config_path    = "${local.k8s_config_dir}/kubeconfig"
     config_context = "kind-management-cluster"
   }
 }
 
 provider "kubernetes" {
-  config_path    = "${local.k8s_config_dir}/config"
+  config_path    = "${local.k8s_config_dir}/kubeconfig"
   config_context = "kind-management-cluster"
 }

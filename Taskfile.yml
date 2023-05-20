@@ -1,27 +1,46 @@
 version: "3"
 
 vars:
-  TF_STATE_DIR: "{{ .TASKFILE_DIR }}/tf_state"
+  TF_STATE_DIR: "{{ .TASKFILE_DIR }}/tf_states"
   K8S_CONTEXT_DIR: "{{ .TASKFILE_DIR }}/contexts"
+  T01_DIR: "{{ .TASKFILE_DIR }}/01_clusters"
+  T02_DIR: "{{ .TASKFILE_DIR }}/02_core_services"
+  T03_DIR: "{{ .TASKFILE_DIR }}/03_core_config"
 
 tasks:
   clusters:
     desc: Provision Kind Clusters
-    dir: "{{ .TASKFILE_DIR }}/01_clusters"
+    dir: "{{ .T01_DIR }}"
     cmds:
       - terraform init && terraform apply -auto-approve
+    sources:
+      - "{{ .T01_DIR }}/*"
+    generates:
+      - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
+      - "{{ .K8S_CONTEXT_DIR }}/kubeconfig"
 
   core_services:
     desc: Provision core services on clusters
-    dir: "{{ .TASKFILE_DIR }}/02_core_services"
+    dir: "{{ .T02_DIR }}"
     cmds:
       - terraform init && terraform apply -auto-approve
+    sources:
+      - "{{ .T02_DIR }}/*"
+      - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
+    generates:
+      - "{{ .TF_STATE_DIR }}/02_core_services.tfstate"
 
   core_config:
     desc: Configure core services on clusters
-    dir: "{{ .TASKFILE_DIR }}/03_core_config"
+    dir: "{{ .T03_DIR }}"
     cmds:
       - terraform init && terraform apply -auto-approve
+    sources:
+      - "{{ .T03_DIR }}/*"
+      - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
+      - "{{ .TF_STATE_DIR }}/02_core_services.tfstate"
+    generates:
+      - "{{ .TF_STATE_DIR }}/03_core_config.tfstate"
 
   reset:
     desc: Remove everything
@@ -29,15 +48,15 @@ tasks:
     cmds:
       - rm {{ .TF_STATE_DIR }}/* || true
       - rm {{ .K8S_CONTEXT_DIR }}/* || true
-      - rm -rf {{ .TASKFILE_DIR }}/01_clusters/.terraform || true
-      - rm -rf {{ .TASKFILE_DIR }}/02_core_services/.terraform || true
-      - rm -rf {{ .TASKFILE_DIR }}/03_core_config/.terraform || true
+      - rm -rf {{ .T01_DIR }}/.terraform || true
+      - rm -rf {{ .T02_DIR }}/.terraform || true
+      - rm -rf {{ .T03_DIR }}/.terraform || true
       - kind delete clusters -A
 
   k9s:
     desc: Start k9s with the generated contexts
     cmds:
-      - KUBECONFIG={{ .K8S_CONTEXT_DIR }}/config k9s
+      - KUBECONFIG={{ .K8S_CONTEXT_DIR }}/kubeconfig k9s
 
   all:
     desc: Provision the full stack

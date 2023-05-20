@@ -10,7 +10,7 @@ terraform {
     }
   }
   backend "local" {
-    path = "../tf_state/02_core_services.tfstate"
+    path = "../tf_states/02_core_services.tfstate"
   }
 }
 

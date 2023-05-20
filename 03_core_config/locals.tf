@@ -1,6 +1,6 @@
 locals {
   k8s_config_dir = pathexpand("${path.cwd}/../contexts")
-  tf_state_path  = pathexpand("${path.cwd}/../tf_state")
+  tf_state_path  = pathexpand("${path.cwd}/../tf_states")
 
   kubeconfig_json = yamldecode(data.local_file.kubeconfig.content)
 
@@ -35,7 +35,7 @@ locals {
 
 ################## Kubeconfigs ##################
 data "local_file" "kubeconfig" {
-  filename = "${local.k8s_config_dir}/config"
+  filename = "${local.k8s_config_dir}/kubeconfig"
 }
 
 resource "local_file" "incluster_kubeconfig" {
