@@ -96,3 +96,42 @@ module "linkerd_kind_worker_cluster_02" {
     helm = helm.kind-worker-cluster-02
   }
 }
+
+module "linkerd_multicluster_kind_management_cluster" {
+  source = "./modules/linkerd-multicluster"
+
+  namespace        = "linkerd-multicluster"
+  create_namespace = true
+
+  providers = {
+    helm = helm.kind-management-cluster
+  }
+
+  depends_on = [moduel.linkerd_kind_management_cluster]
+}
+
+module "linkerd_multicluster_kind_worker_cluster_01" {
+  source = "./modules/linkerd-multicluster"
+
+  namespace        = "linkerd-multicluster"
+  create_namespace = true
+
+  providers = {
+    helm = helm.kind-worker-cluster-01
+  }
+
+  depends_on = [module.linkerd_kind_worker_cluster_01]
+}
+
+module "linkerd_multicluster_kind_worker_cluster_02" {
+  source = "./modules/linkerd-multicluster"
+
+  namespace        = "linkerd-multicluster"
+  create_namespace = true
+
+  providers = {
+    helm = helm.kind-worker-cluster-02
+  }
+
+  depends_on = [module.linkerd_kind_worker_cluster_02]
+}
