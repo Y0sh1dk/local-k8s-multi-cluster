@@ -14,7 +14,7 @@ tasks:
     cmds:
       - terraform init && terraform apply -auto-approve
     sources:
-      - "{{ .T01_DIR }}/*"
+      - "{{ .T01_DIR }}/**/*"
     generates:
       - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
       - "{{ .K8S_CONTEXT_DIR }}/kubeconfig"
@@ -25,7 +25,7 @@ tasks:
     cmds:
       - terraform init && terraform apply -auto-approve
     sources:
-      - "{{ .T02_DIR }}/*"
+      - "{{ .T02_DIR }}/**/*"
       - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
     generates:
       - "{{ .TF_STATE_DIR }}/02_core_services.tfstate"
@@ -36,7 +36,7 @@ tasks:
     cmds:
       - terraform init && terraform apply -auto-approve
     sources:
-      - "{{ .T03_DIR }}/*"
+      - "{{ .T03_DIR }}/**/*"
       - "{{ .TF_STATE_DIR }}/01_clusters.tfstate"
       - "{{ .TF_STATE_DIR }}/02_core_services.tfstate"
     generates:

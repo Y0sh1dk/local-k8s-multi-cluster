@@ -5,6 +5,8 @@ resource "kubernetes_namespace" "ingress_nginx" {
 }
 
 resource "helm_release" "ingress_nginx" {
+  provider = helm.kind-management-cluster
+
   namespace        = kubernetes_namespace.ingress_nginx.metadata[0].name
   create_namespace = false
   name             = "ingress-nginx"

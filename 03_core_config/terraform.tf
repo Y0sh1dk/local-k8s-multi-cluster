@@ -12,6 +12,10 @@ terraform {
       source  = "oboukili/argocd"
       version = ">= 5.3.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = ">= 4.0.4"
+    }
   }
   backend "local" {
     path = "../tf_states/03_core_config.tfstate"

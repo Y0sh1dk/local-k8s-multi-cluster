@@ -5,6 +5,8 @@ resource "kubernetes_namespace" "argocd" {
 }
 
 resource "helm_release" "argocd" {
+  provider = helm.kind-management-cluster
+
   namespace        = kubernetes_namespace.argocd.metadata[0].name
   create_namespace = false
   name             = "argo-cd"
