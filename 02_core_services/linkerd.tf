@@ -107,7 +107,7 @@ module "linkerd_multicluster_kind_management_cluster" {
     helm = helm.kind-management-cluster
   }
 
-  depends_on = [moduel.linkerd_kind_management_cluster]
+  depends_on = [module.linkerd_kind_management_cluster]
 }
 
 module "linkerd_multicluster_kind_worker_cluster_01" {
