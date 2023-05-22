@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  utils:
+    image: local-k8s-multi-cluster-utils:latest
+    build:
+      dockerfile: Dockerfile
+    entrypoint: ""
+    volumes:
+      - ..:/work
+    working_dir: /work
+    networks:
+      - kind
+
+networks:
+  kind:
+    name: kind
+    external: true
