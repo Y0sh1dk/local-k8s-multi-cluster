@@ -5,8 +5,8 @@ resource "null_resource" "linkerd_multi_cluster" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = <<-EOT
-        task in-network -- KUBECONFIG=contexts/incluster_kubeconfig linkerd --context=kind-worker-cluster-01 multicluster link --cluster-name kind-worker-cluster-01 --gateway-addresses worker-cluster-01-control-plane | kubectl --context=kind-worker-cluster-02 apply -f -
-        task in-network -- KUBECONFIG=contexts/incluster_kubeconfig linkerd --context=kind-worker-cluster-02 multicluster link --cluster-name kind-worker-cluster-02 --gateway-addresses worker-cluster-02-control-plane | kubectl --context=kind-worker-cluster-01 apply -f -
+        task in-network -- linkerd --context=kind-worker-cluster-01 multicluster link --cluster-name kind-worker-cluster-01 --gateway-addresses worker-cluster-01-control-plane | kubectl --context=kind-worker-cluster-02 apply -f -
+        task in-network -- linkerd --context=kind-worker-cluster-02 multicluster link --cluster-name kind-worker-cluster-02 --gateway-addresses worker-cluster-02-control-plane | kubectl --context=kind-worker-cluster-01 apply -f -
     EOT
     environment = {
       "KUBECONFIG"           = "${local.k8s_config_dir}/kubeconfig"
