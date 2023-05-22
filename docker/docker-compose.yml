@@ -1,7 +1,6 @@
 version: "3.7"
 services:
   utils:
-    image: local-k8s-multi-cluster-utils:latest
     build:
       dockerfile: Dockerfile
     tty: true
@@ -10,6 +9,8 @@ services:
     working_dir: /work
     networks:
       - kind
+    environment:
+      - KUBECONFIG=/work/contexts/incluster_kubeconfig
 
 networks:
   kind:
