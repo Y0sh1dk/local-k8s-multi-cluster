@@ -42,6 +42,12 @@ tasks:
     generates:
       - "{{ .TF_STATE_DIR }}/03_core_config.tfstate"
 
+  in-network:
+    desc: Run docker container inside the Kind in-network
+    dir: "{{ .TASKFILE_DIR }}"
+    cmds:
+      - docker-compose -f docker/docker-compose.yml run --rm utils sh -c '{{ .CLI_ARGS }}'
+
   reset:
     desc: Remove everything
     dir: "{{ .TASKFILE_DIR }}"
