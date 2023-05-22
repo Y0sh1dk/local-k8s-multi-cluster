@@ -4,7 +4,7 @@ services:
     image: local-k8s-multi-cluster-utils:latest
     build:
       dockerfile: Dockerfile
-    entrypoint: ""
+    tty: true
     volumes:
       - ..:/work
     working_dir: /work

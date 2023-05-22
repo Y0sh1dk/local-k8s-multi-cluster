@@ -46,7 +46,8 @@ tasks:
     desc: Run docker container inside the Kind in-network
     dir: "{{ .TASKFILE_DIR }}"
     cmds:
-      - docker-compose -f docker/docker-compose.yml run --rm utils sh -c '{{ .CLI_ARGS }}'
+      - docker-compose -f docker/docker-compose.yml up -d
+      - docker-compose -f docker/docker-compose.yml exec utils sh -c '{{ .CLI_ARGS }}'
 
   reset:
     desc: Remove everything
