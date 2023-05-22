@@ -6,6 +6,7 @@ provider "registry.terraform.io/tehcyx/kind" {
   constraints = "0.0.17"
   hashes = [
     "h1:J5W0wnUM8EGBGedux0YgtOx3gqD800Qt+/0VJBzUqTg=",
+    "h1:OBktoLkFov+FTN6aBtAXsXu+WyBgPeqXrn3lEReY12A=",
     "zh:0df083a684d820c20fa4432ef07a2358c47fbbae39cc96a402b808cb9b31d4ec",
     "zh:462553d21d53f10f5fff5faa23e9ba15fb16ae14863d6b048f47a0bf4f80bc4c",
     "zh:a52cff9e3a29e5beb2dc57b771513099b4faa697f5af71bf325a707665968e2d",
