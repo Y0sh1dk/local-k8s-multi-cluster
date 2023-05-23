@@ -1,21 +1,26 @@
 resource "null_resource" "linkerd_multi_cluster" {
   triggers = {
-    time = timestamp()
+    incluster_kubeconfig = local_file.incluster_kubeconfig.content_base64
   }
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = <<-EOT
-        task in-network -- linkerd --context=kind-worker-cluster-01 multicluster link --cluster-name kind-worker-cluster-01 --gateway-addresses worker-cluster-01-control-plane | kubectl --context=kind-worker-cluster-02 apply -f -
-        task in-network -- linkerd --context=kind-worker-cluster-02 multicluster link --cluster-name kind-worker-cluster-02 --gateway-addresses worker-cluster-02-control-plane | kubectl --context=kind-worker-cluster-01 apply -f -
+        CONTEXTS=$(yq '.clusters.[].name' $KUBECONFIG)
+        for CONTEXT_A in $CONTEXTS
+        do
+          for CONTEXT_B in $CONTEXTS
+          do
+            if [ $CONTEXT_A != $CONTEXT_B ]; then
+              CLUSTER_A_GATEWAY_ADDRESS=$${CONTEXT_A#"kind-"}-control-plane
+              echo "Linking $CONTEXT_A to $CONTEXT_B with $CLUSTER_A_GATEWAY_ADDRESS gateway"
+              LINKERD_LINK_COMMAND="linkerd --context $CONTEXT_A multicluster link --cluster-name $CONTEXT_A --gateway-addresses $CLUSTER_A_GATEWAY_ADDRESS | kubectl --context $CONTEXT_B apply -f -"
+              task in-network -- "$LINKERD_LINK_COMMAND"
+            fi
+          done
+        done
     EOT
     environment = {
-      "KUBECONFIG"           = "${local.k8s_config_dir}/kubeconfig"
-      "INCLUSTER_KUBECONFIG" = local_file.incluster_kubeconfig.filename
-      "KUBECTL_CONTEXT"      = "kind-management-cluster"
-      "ARGOCD_NAMESPACE"     = local.argocd_config.chart_metadata[0].namespace
-      "ARGOCD_USERNAME"      = local.argocd_config.admin_username
-      "ARGOCD_PASSWORD"      = local.argocd_config.admin_password
-      "ARGOCD_POD_DIRECTORY" = "/tmp"
+      "KUBECONFIG" = local_file.incluster_kubeconfig.filename
     }
   }
 

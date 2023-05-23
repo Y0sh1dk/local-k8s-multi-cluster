@@ -5,14 +5,14 @@ resource "null_resource" "argocd_clusters" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = <<-EOT
-        POD_ID=$(kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE get pod | grep 'argocd-server' | awk 'END {print $1}' | xargs echo)
         CONTEXTS=$(yq '.clusters.[].name' $INCLUSTER_KUBECONFIG)
-        kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE cp $INCLUSTER_KUBECONFIG $POD_ID:$ARGOCD_POD_DIRECTORY
-        task in-network -- argocd login management-cluster-control-plane --username ${local.argocd_config.admin_username} --password ${local.argocd_config.admin_password} --insecure --grpc-web
+        ARGOCD_LOGIN_COMMAND="argocd login management-cluster-control-plane --username ${local.argocd_config.admin_username} --password ${local.argocd_config.admin_password} --insecure --grpc-web"
+        task in-network -- "$ARGOCD_LOGIN_COMMAND"
         for CONTEXT in $CONTEXTS
         do
           if [ "$CONTEXT" != "$KUBECTL_CONTEXT" ]; then
-            task in-network -- argocd cluster add $CONTEXT --name $CONTEXT --kubeconfig contexts/incluster_kubeconfig
+            ARGOCD_CLUSTER_ADD_COMMAND="argocd cluster add $CONTEXT --name $CONTEXT --kubeconfig contexts/incluster_kubeconfig"
+            task in-network -- "$ARGOCD_CLUSTER_ADD_COMMAND"
           fi
         done
     EOT
