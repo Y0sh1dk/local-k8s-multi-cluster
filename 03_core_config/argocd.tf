@@ -9,10 +9,10 @@ resource "null_resource" "argocd_clusters" {
         CONTEXTS=$(yq '.clusters.[].name' $INCLUSTER_KUBECONFIG)
         kubectl --context $KUBECTL_CONTEXT -n $ARGOCD_NAMESPACE cp $INCLUSTER_KUBECONFIG $POD_ID:$ARGOCD_POD_DIRECTORY
         task in-network -- argocd login management-cluster-control-plane --username ${local.argocd_config.admin_username} --password ${local.argocd_config.admin_password} --insecure --grpc-web
-        for context in $CONTEXTS
+        for CONTEXT in $CONTEXTS
         do
-          if [ "$context" != "$KUBECTL_CONTEXT" ]; then
-            task in-network -- argocd cluster add $context --name $context --kubeconfig contexts/incluster_kubeconfig
+          if [ "$CONTEXT" != "$KUBECTL_CONTEXT" ]; then
+            task in-network -- argocd cluster add $CONTEXT --name $CONTEXT --kubeconfig contexts/incluster_kubeconfig
           fi
         done
     EOT
