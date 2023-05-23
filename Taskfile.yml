@@ -59,6 +59,7 @@ tasks:
       - rm -rf {{ .T02_DIR }}/.terraform || true
       - rm -rf {{ .T03_DIR }}/.terraform || true
       - kind delete clusters -A
+      - docker-compose -f docker/docker-compose.yml kill
 
   k9s:
     desc: Start k9s with the generated contexts
