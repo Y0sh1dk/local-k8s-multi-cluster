@@ -5,7 +5,7 @@ resource "helm_release" "kube_prometheus" {
   name       = "kube-prometheus"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "kube-prometheus"
-  version    = "8.10.3"
+  version    = "8.13.0"
   timeout    = var.timeout
 
   set {
